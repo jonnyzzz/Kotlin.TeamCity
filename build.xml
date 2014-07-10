@@ -14,31 +14,43 @@
     </sequential>
   </macrodef>
 
-  <target name="setup">
-    <echo>Setting up Kotlin properties for TeamCity</echo>
+  <macrodef name="setup">
+    <attribute name="kotlinHome" default="kotlin/Kotlin/kotlinc"/>
 
-    <!-- # common variable to hold path to Kotlin -->
-    <teamcity-set name="kotlinHome"
-                  value="%teamcity.build.checkoutDir%/kotlin/Kotlin/kotlinc"
-    />
+    <sequential>
+      <echo>Setting up Kotlin properties for TeamCity</echo>
+   
+      <!-- this macrodef implements 
+           http://confluence.jetbrains.com/display/JET/Setting+up+a+TeamCity+build+that+uses+Kotlin 
+      -->
+
+  
+      <property name="actual.kotlinHome" location="@{kotlinHome}"/>
+
+      <echo>Using kotlin home path: ${actual.kotlinHome}</echo>     
+
+      <property name="actual.jps.1" location="${actual.kotlinHome}/../lib/jps" />
+      <property name="actual.jps.2" location="${actual.kotlinHome}/../lib/kotlin-runtime.jar" />
+      <property name="actual.jps.3" location="${actual.kotlinHome}/../lib/kotlin-plugin.jar" /> 
+
+      <!-- # use the right JPS plug-in -->
+      <teamcity-set name="teamcity.ideaRunner.additional.lib.path" value="${actual.jps.1};${actual.jps.2};${actual.jps.3}"  />
+
+      <property name="actual.jdk-annotations" location="${actual.kotlinHome}/lib/kotlin-jdk-annotations.jar" /> 
+
+      <!-- # make the build locate annotations for your JDK (alas, TeamCity cannot reuse JDK definitions from you IDEA configuration). -->
+      <teamcity-set name="system.jps.kotlin.extra.annotation.paths" value="${actual.jdk-annotations}" />
+    </sequential>
+  </macrodef>
+
  
-    <!-- # use the right JPS plug-in -->
-    <teamcity-set name="teamcity.ideaRunner.additional.lib.path"
-                  value="%kotlinHome%/../lib/jps;%kotlinHome%/../lib/kotlin-runtime.jar;%kotlinHome%/../lib/kotlin-plugin.jar"
-    />
- 
-    <!-- # make the build locate annotations for your JDK (alas, TeamCity cannot reuse JDK definitions from you IDEA configuration). -->
-    <teamcity-set name="system.jps.kotlin.extra.annotation.paths"
-                  value="%kotlinHome%/lib/kotlin-jdk-annotations.jar"
-    />
-
-
-  </target>
-
   <target name="fetch">
      
 
   </target>
 
+  <target name="setup">
+     <setup />
+  </target>
 
 </project>
