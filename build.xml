@@ -1,9 +1,10 @@
 <project basedir="." default="build">
-
+  <property name="kotlin-build" value="bootstrap.tcbuildtag" />
+  <property name="kotlin-home" value=".kotlin" />
+ 
   <target name="build">
-    <property name="kotlin" location=".kotlin" />
-    <fetch kotlin="${kotlin}" />
-    <setup kotlin="${kotlin}" />
+    <fetch kotlin="${kotlin-home}" build="${kotlin-build}"/>
+    <setup kotlin="${kotlin-home}" />
   </target>
 
 <!-- implementation --> 
@@ -71,7 +72,7 @@
       <unzip dest="@{kotlin}-dist" src="@{kotlin}-dist/artifacts.zip" />
 
       <unzip dest="@{kotlin}">
-        <fileset dir="${kotlin}-dist">
+        <fileset dir="@{kotlin}-dist">
           <include name="kotlin-plugin*.zip" />
         </fileset>
       </unzip>
