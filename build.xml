@@ -29,7 +29,7 @@
            http://confluence.jetbrains.com/display/JET/Setting+up+a+TeamCity+build+that+uses+Kotlin 
       -->
        
-      <property name="actual.kotlinHome" location="@{kotlin}/kotlin/Kotlin/kotlinc"/>
+      <property name="actual.kotlinHome" location="@{kotlin}/Kotlin/kotlinc"/>
 
       <echo>Using kotlin home path: ${actual.kotlinHome}</echo>     
 
