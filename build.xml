@@ -1,8 +1,14 @@
 <project basedir="." default="build">
 
-  <target name="build" depends="setup" />
+  <target name="build">
+    <property name="kotlin" location="kotlin" />
+    <fetch kotlin="${kotlin}" />
+    <setup kotlin="${kotlin}" />
+  </target>
 
 <!-- implementation --> 
+
+  <property name="home" location="." />
 
   <macrodef name="teamcity-set">
     <attribute name="name" />
@@ -15,7 +21,7 @@
   </macrodef>
 
   <macrodef name="setup">
-    <attribute name="kotlinHome" default="kotlin/Kotlin/kotlinc"/>
+    <attribute name="kotlin" />
 
     <sequential>
       <echo>Setting up Kotlin properties for TeamCity</echo>
@@ -23,9 +29,8 @@
       <!-- this macrodef implements 
            http://confluence.jetbrains.com/display/JET/Setting+up+a+TeamCity+build+that+uses+Kotlin 
       -->
-
-  
-      <property name="actual.kotlinHome" location="@{kotlinHome}"/>
+       
+      <property name="actual.kotlinHome" location="@{kotlin}/kotlin/Kotlin/kotlinc"/>
 
       <echo>Using kotlin home path: ${actual.kotlinHome}</echo>     
 
@@ -43,14 +48,56 @@
     </sequential>
   </macrodef>
 
+  <condition property="teamcity.auth.prefix" value="httpAuth" else="guestAuth">
+    <or>
+      <isset property="teamcity.auth.userId"/>
+      <isset property="teamcity.auth.password" />
+    </or>
+  </condition>
+  <property name="teamcity.auth.userId" value="" />
+  <property name="teamcity.auth.password" value="" />
+
+  <macrodef name="fetch">
+    <attribute name="id" />
+    <attribute name="dest" />
+    <attribute name="rel" />
+    <attribute name="repo" default="download" />
+    <attribute name="build" default="${teamcity.default.dependency.build.number}" />
+    <sequential>
+
+      <get dest="${home}/@{dest}" username="${teamcity.auth.userId}" password="${teamcity.auth.password}">
+         <url url="${teamcity.serverUrl}/${teamcity.auth.prefix}/repository/@{repo}/@{id}/@{build}/@{rel}"/>
+      </get>
+     </sequential>
+  </macrodef>
+
  
-  <target name="fetch">
-     
+  <macrodef name="fetch">
+    <attribute name="kotlin" />
+    <attribute name="build" default="bootstrap.tcbuildtag"/>
+    <sequential>
+    
+      
+      <delete dir="@{kotlin}" failonerror="false" />
+      <mkdir dir="@{kotlin}" />
+      <delete dir="@{kotlin}-dist" failonerror="false"/>
+      <mkdir dir="@{kotlin}-dist" />
 
-  </target>
+      <get dest="@{kotlin}-dist" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
+         <url url="http://teamcity.jetbrains.com/${teamcity.auth.prefix}/repository/downloadAll/bt345/@{build}/artifacts.zip"/>
+      </get>
+    
+      <unzip dest="@{kotlin}-dist" src="@{kotlin}-dist/artifacts.zip" />
 
-  <target name="setup">
-     <setup />
-  </target>
+      <unzip dest="@{kotlin}">
+        <fileset dir="${kotlin}-dist">
+          <include name="kotlin-plugin*.zip" />
+        </fileset>
+      </unzip>
+
+      <loadfile property="kotlin-build" srcFile="@{kotlin}/Kotlin/kotlinc/build.txt" />
+      <echo>Using Kotlin: ${kotlin-build}</echo>
+    </sequential>
+  </macrodef>
 
 </project>
