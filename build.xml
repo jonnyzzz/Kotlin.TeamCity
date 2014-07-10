@@ -1,14 +1,12 @@
 <project basedir="." default="build">
 
   <target name="build">
-    <property name="kotlin" location="kotlin" />
+    <property name="kotlin" location=".kotlin" />
     <fetch kotlin="${kotlin}" />
     <setup kotlin="${kotlin}" />
   </target>
 
 <!-- implementation --> 
-
-  <property name="home" location="." />
 
   <macrodef name="teamcity-set">
     <attribute name="name" />
@@ -56,28 +54,11 @@
   </condition>
   <property name="teamcity.auth.userId" value="" />
   <property name="teamcity.auth.password" value="" />
-
-  <macrodef name="fetch">
-    <attribute name="id" />
-    <attribute name="dest" />
-    <attribute name="rel" />
-    <attribute name="repo" default="download" />
-    <attribute name="build" default="${teamcity.default.dependency.build.number}" />
-    <sequential>
-
-      <get dest="${home}/@{dest}" username="${teamcity.auth.userId}" password="${teamcity.auth.password}">
-         <url url="${teamcity.serverUrl}/${teamcity.auth.prefix}/repository/@{repo}/@{id}/@{build}/@{rel}"/>
-      </get>
-     </sequential>
-  </macrodef>
-
  
   <macrodef name="fetch">
     <attribute name="kotlin" />
     <attribute name="build" default="bootstrap.tcbuildtag"/>
     <sequential>
-    
-      
       <delete dir="@{kotlin}" failonerror="false" />
       <mkdir dir="@{kotlin}" />
       <delete dir="@{kotlin}-dist" failonerror="false"/>
@@ -99,5 +80,5 @@
       <echo>Using Kotlin: ${kotlin-build}</echo>
     </sequential>
   </macrodef>
-
 </project>
+
