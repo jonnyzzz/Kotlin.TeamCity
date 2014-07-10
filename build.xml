@@ -1,0 +1,44 @@
+<project basedir="." default="build">
+
+  <target name="build" depends="setup" />
+
+<!-- implementation --> 
+
+  <macrodef name="teamcity-set">
+    <attribute name="name" />
+    <attribute name="value" />
+    <sequential>
+      <echo>
+##teamcity[setParameter name='@{name}' value='@{value}']
+      </echo>
+    </sequential>
+  </macrodef>
+
+  <target name="setup">
+    <echo>Setting up Kotlin properties for TeamCity</echo>
+
+    <!-- # common variable to hold path to Kotlin -->
+    <teamcity-set name="kotlinHome"
+                  value="%teamcity.build.checkoutDir%/kotlin/Kotlin/kotlinc"
+    />
+ 
+    <!-- # use the right JPS plug-in -->
+    <teamcity-set name="teamcity.ideaRunner.additional.lib.path"
+                  value="%kotlinHome%/../lib/jps;%kotlinHome%/../lib/kotlin-runtime.jar;%kotlinHome%/../lib/kotlin-plugin.jar"
+    />
+ 
+    <!-- # make the build locate annotations for your JDK (alas, TeamCity cannot reuse JDK definitions from you IDEA configuration). -->
+    <teamcity-set name="system.jps.kotlin.extra.annotation.paths"
+                  value="%kotlinHome%/lib/kotlin-jdk-annotations.jar"
+    />
+
+
+  </target>
+
+  <target name="fetch">
+     
+
+  </target>
+
+
+</project>
