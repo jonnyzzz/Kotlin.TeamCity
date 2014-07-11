@@ -1,5 +1,6 @@
 <project basedir="." default="build">
-  <property name="kotlin-build" value="bootstrap.tcbuildtag" />
+  <property name="kotlin-tag" value="bootstrap" />
+  <property name="kotlin-build" value="${kotlin-tag}.tcbuildtag" />
   <property name="kotlin-home" value=".kotlin" />
  
   <target name="build">
@@ -49,16 +50,7 @@
       <teamcity-set name="system.jps.kotlin.extra.annotation.paths" value="${actual.jdk-annotations}" />
     </sequential>
   </macrodef>
-
-  <condition property="teamcity.auth.prefix" value="httpAuth" else="guestAuth">
-    <or>
-      <isset property="teamcity.auth.userId"/>
-      <isset property="teamcity.auth.password" />
-    </or>
-  </condition>
-  <property name="teamcity.auth.userId" value="" />
-  <property name="teamcity.auth.password" value="" />
- 
+  
   <macrodef name="fetch">
     <attribute name="kotlin" />
     <attribute name="build" default="bootstrap.tcbuildtag"/>
@@ -67,6 +59,15 @@
       <mkdir dir="@{kotlin}" />
       <delete dir="@{kotlin}-dist" failonerror="false"/>
       <mkdir dir="@{kotlin}-dist" />
+
+      <condition property="teamcity.auth.prefix" value="httpAuth" else="guestAuth">
+        <or>
+          <isset property="teamcity.auth.userId"/>
+          <isset property="teamcity.auth.password" />
+        </or>
+      </condition>
+      <property name="teamcity.auth.userId" value="" />
+      <property name="teamcity.auth.password" value="" />
 
       <get dest="@{kotlin}-dist" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
          <url url="http://teamcity.jetbrains.com/${teamcity.auth.prefix}/repository/downloadAll/bt345/@{build}/artifacts.zip"/>
