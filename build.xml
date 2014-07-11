@@ -35,6 +35,8 @@
       <echo>Using kotlin home path: ${actual.kotlinHome}</echo>     
 
       <property name="actual.kotlinc" location="${actual.kotlinHome}"/>
+      
+      <!-- may be required for older Kotlin builds -->
       <teamcity-set name="system.jps.kotlin.home" value="${actual.kotlinc}" />
 
       <property name="actual.jps.1" location="${actual.kotlinHome}/../lib/jps" />
