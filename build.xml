@@ -2,6 +2,7 @@
   <property name="kotlin-tag" value="bootstrap" />
   <property name="kotlin-build" value="${kotlin-tag}.tcbuildtag" />
   <property name="kotlin-home" value=".kotlin" />
+  <property name="allow-fetch-auth" value="false" />
  
   <target name="build">
     <fetch kotlin="${kotlin-home}" build="${kotlin-build}"/>
@@ -64,10 +65,11 @@
       <mkdir dir="@{kotlin}-dist" />
 
       <condition property="teamcity.auth.prefix" value="httpAuth" else="guestAuth">
-        <or>
+        <and>
           <isset property="teamcity.auth.userId"/>
           <isset property="teamcity.auth.password" />
-        </or>
+          <equals arg1="${allow-fetch-auth}" arg2="true" />
+        </and>
       </condition>
       <property name="teamcity.auth.userId" value="" />
       <property name="teamcity.auth.password" value="" />
