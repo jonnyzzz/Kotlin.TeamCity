@@ -38,6 +38,7 @@
       
       <!-- may be required for older Kotlin builds -->
       <teamcity-set name="system.jps.kotlin.home" value="${actual.kotlinc}" />
+      <teamcity-set name="system.path.macro.KOTLIN.BUNDLED" value="${actual.kotlinc}" />
 
       <property name="actual.jps.1" location="${actual.kotlinHome}/../lib/jps" />
       <property name="actual.jps.2" location="${actual.kotlinHome}/../lib/kotlin-runtime.jar" />
