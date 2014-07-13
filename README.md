@@ -20,9 +20,10 @@ Internals
 The script uses TeamCity service message to set all necessary build parameters. 
 
 It also sets/overrides the ```system.path.macro.KOTLIN.BUNDLED``` parameter with 
-full path to Kotlin on build agent. It simplifies use of ```KOTLIN_BUNDLED``` path 
-variable in IntelliJ IDEA. You may have any value of the variable in TeamCity build
-parameters tab
+full path to Kotlin on build agent. The parameter is the alias to 
+the ```KOTLIN_BUNDLED``` IntelliJ IDEA path variable in the build runner.
+You may have any value of the ```system.path.macro.KOTLIN.BUNDLED``` parameter 
+in TeamCity build parameters tab.
 
 
 License
