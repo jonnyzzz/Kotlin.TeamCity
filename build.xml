@@ -3,6 +3,8 @@
   <property name="kotlin-build" value="${kotlin-tag}.tcbuildtag" />
   <property name="kotlin-home" value=".kotlin" />
   <property name="allow-fetch-auth" value="false" />
+  <property name="teamcity-host" value="http://teamcity.jetbrains.com"/>
+  <property name="teamcity-path" value="repository/downloadAll/bt345" />
  
   <target name="build">
     <fetch kotlin="${kotlin-home}" build="${kotlin-build}"/>
@@ -73,9 +75,9 @@
       </condition>
       <property name="teamcity.auth.userId" value="" />
       <property name="teamcity.auth.password" value="" />
-
+    
       <get dest="@{kotlin}-dist" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
-         <url url="http://teamcity.jetbrains.com/${teamcity.auth.prefix}/repository/downloadAll/bt345/@{build}/artifacts.zip"/>
+         <url url="${teamcity-host}/${teamcity.auth.prefix}/${teamcity-path}/@{build}/artifacts.zip"/>
       </get>
     
       <unzip dest="@{kotlin}-dist" src="@{kotlin}-dist/artifacts.zip" />
