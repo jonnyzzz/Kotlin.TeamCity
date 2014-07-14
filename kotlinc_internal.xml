@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta-runner name="Setup Kotlinc">
+  <description>Downloads and registers Kotlin compiler into IntelliJ IDEA build runner</description>
+  <settings>
+    <parameters>
+      <param name="KOTLIN_TAG" value="M8" spec="select label_1='M8' data_1='M8' data_3='M7' label_3='M7' label_5='bootstrap' data_5='Bootstrap' label_7='master' data_7='Master' description='Select Kotlin build tag' label='Kotlin Version' display='normal'" />
+    </parameters>
+    <build-runners>
+      <runner name="Fetch and Register Kotlinc" type="Ant">
+        <parameters>
+          <param name="build-file"><![CDATA[<project>
+ <property name="kotlin-build" value="Kotlin_Mirrors_%KOTLIN_TAG%/latest.lastSuccessful" />
+ <property name="teamcity-host" value="http://buildserver.labs.intellij.net"/>
+ <property name="teamcity-path" value="repository/downloadAll" />
+ <property name="allow-fetch-auth" value="true" />
+
+ <import>
+   <url url="https://raw.githubusercontent.com/jonnyzzz/Kotlin.TeamCity/master/build.xml"/>
+ </import>
+</project>]]></param>
+          <param name="target" value="build" />
+          <param name="build-file-path" value="build.xml" />
+          <param name="use-custom-build-file" value="true" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <requirements />
+  </settings>
+</meta-runner>
+
+

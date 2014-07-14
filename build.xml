@@ -88,8 +88,9 @@
         </fileset>
       </unzip>
 
-      <loadfile property="kotlin-build" srcFile="@{kotlin}/Kotlin/kotlinc/build.txt" />
-      <echo>Using Kotlin: ${kotlin-build}</echo>
+      <loadfile property="kotlin-build-number" srcFile="@{kotlin}/Kotlin/kotlinc/build.txt" />
+      <echo>Using Kotlin: ${kotlin-build-number}</echo>
+      <teamcity-set name="kotlin-build-number" value="${kotlin-build-number}" />
     </sequential>
   </macrodef>
 </project>
