@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE template SYSTEM "../../../project-config.dtd">
+
+<template>
+  <name>Mirror Template</name>
+  <settings>
+    <options>
+      <option name="artifactRules" value="**/*" />
+      <option name="cleanBuild" value="true" />
+    </options>
+    <parameters>
+      <param name="base_url" value="http://teamcity.jetbrains.com/guestAuth/repository" spec="text display='hidden'" />
+      <param name="build-type-id" value="bt345" spec="text display='hidden'" />
+      <param name="system.fetch_url" value="%base_url%/downloadAll/%build-type-id%/%DOWNLOAD_QUALIFIER%/artifacts.zip" spec="text display='hidden'" />
+      <param name="system.trigger_url" value="%base_url%/download/%build-type-id%/%DOWNLOAD_QUALIFIER%/updatePlugins.xml" spec="text display='hidden'" />
+    </parameters>
+    <build-runners>
+      <runner id="RUNNER_1478" name="" type="Ant">
+        <parameters>
+          <param name="build-file"><![CDATA[<project default="fetch" basedir=".">
+  <target name="fetch">
+    <get src="${fetch_url}" dest="${basedir}"/>
+
+     <unzip src="artifacts.zip" dest="."/>
+     <delete file="artifacts.zip" />
+
+     <mkdir dir="tmp" />
+     <unzip dest="tmp">
+       <fileset dir=".">
+         <include name="kotlin-plugin*.zip" />
+       </fileset>
+     </unzip>
+
+     <loadfile property="jonnyzzz.info.version"
+               srcFile="tmp/Kotlin/kotlinc/build.txt" />
+
+     <delete dir="tmp" failonerror="false" />
+
+     <echo>##teamcity[buildNumber '${jonnyzzz.info.version}']</echo>
+  </target>
+</project>]]></param>
+          <param name="build-file-path" value="build.xml" />
+          <param name="target" value="fetch" />
+          <param name="teamcity.coverage.emma.include.source" value="true" />
+          <param name="teamcity.coverage.emma.instr.parameters" value="-ix -*Test*" />
+          <param name="teamcity.coverage.idea.includePatterns" value="*" />
+          <param name="teamcity.step.mode" value="default" />
+          <param name="use-custom-build-file" value="true" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings />
+    <requirements />
+    <build-triggers>
+      <build-trigger id="TRIGGER_1072" type="urlBuildTrigger">
+        <parameters>
+          <param name="poll.interval.build.trigger.url" value="600" />
+          <param name="url.build.trigger.url" value="%system.trigger_url%" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
+    <cleanup />
+  </settings>
+</template>
+

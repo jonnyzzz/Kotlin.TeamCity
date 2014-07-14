@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE build-type SYSTEM "../../../project-config.dtd">
+
+<build-type>
+  <name>M8</name>
+  <description />
+  <settings ref="Kotlin_Mirrors_MirrorTemplate">
+    <parameters>
+      <param name="DOWNLOAD_QUALIFIER" value="M8.tcbuildtag" />
+    </parameters>
+    <build-runners order="RUNNER_1478" />
+    <vcs-settings />
+    <requirements />
+    <build-triggers />
+    <cleanup />
+  </settings>
+</build-type>
+
