@@ -3,7 +3,7 @@
   <description>Downloads and registers Kotlin compiler into IntelliJ IDEA build runner</description>
   <settings>
     <parameters>
-      <param name="KOTLIN_TAG" value="M8" spec="text description='Select Kotlin build tag, e.g. |'M8 or bootstrap|'' validationMode='not_empty' label='Kotlin Version' display='normal'" />
+      <param name="KOTLIN_TAG" value="M10" spec="text description='Select Kotlin build tag, e.g. |'M10 or bootstrap|'' validationMode='not_empty' label='Kotlin Version' display='normal'" />
     </parameters>
     <build-runners>
       <runner name="Fetch and Register Kotlinc" type="Ant">
