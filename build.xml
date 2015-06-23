@@ -1,11 +1,12 @@
 <project basedir="." default="build">
   <property name="kotlin-tag" value="bootstrap" />
   <property name="kotlin-build" value="${kotlin-tag}.tcbuildtag" />
-  <property name="kotlin-home" value=".kotlin" />
+  <property name="kotlin-home" location="${basedir}/.kotlin" />
   <property name="allow-fetch-auth" value="false" />
-  <property name="teamcity-host" value="http://teamcity.jetbrains.com"/>
-  <property name="teamcity-path" value="repository/downloadAll/bt345" />
- 
+  <property name="teamcity-host" value="https://teamcity.jetbrains.com"/>
+  <!-- property name="teamcity-path" is not used to tell if resolve via REST is required, should not be defined explicitly -->
+  <property name="teamcity-path-default" value="repository/downloadAll/bt345" />
+
   <target name="build">
     <fetch kotlin="${kotlin-home}" build="${kotlin-build}"/>
     <setup kotlin="${kotlin-home}" />
@@ -75,11 +76,73 @@
       </condition>
       <property name="teamcity.auth.userId" value="" />
       <property name="teamcity.auth.password" value="" />
-    
-      <get dest="@{kotlin}-dist" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
-         <url url="${teamcity-host}/${teamcity.auth.prefix}/${teamcity-path}/@{build}/artifacts.zip"/>
-      </get>
-    
+
+      <condition property="teamcity-path-actual" value="${teamcity-path}" else="${teamcity-path-default}">
+        <isset property="teamcity-path" />
+      </condition>
+
+      <echoxml file="@{kotlin}-dist/ant-helper.xml">
+        <project basedir="${basedir}" default="build">
+          <target name="build" depends="resolve-kotlin-build, fetch-kotlin" />
+
+          <target name="resolve-kotlin-build" depends="resolve-kotlin-build-decide,
+                                                       resolve-kotlin-build-simple,
+                                                       resolve-kotlin-build-via-rest" />
+
+          <target name="resolve-kotlin-build-decide">
+            <condition property="kotlin-use-REST" value="true">
+              <and>
+                <not><isset property="teamcity-path" /></not>
+                <not><isset property="force-simple-resolve"/></not>
+              </and>
+            </condition>
+          </target>
+
+          <target name="resolve-kotlin-build-simple" unless="kotlin-use-REST">
+            <property name="kotlin-build-selector" value="${kotlin-build}" />
+          </target>
+
+          <target name="resolve-kotlin-build-via-rest" if="kotlin-use-REST">
+            <!-- here goes workaround for https://youtrack.jetbrains.com/issue/TW-41226 -->
+
+            <echo file="@{kotlin}-dist/tag">${kotlin-build}</echo>
+            <loadfile property="kotlin-tag-selector" srcfile="@{kotlin}-dist/tag">
+              <filterchain>
+                <tokenfilter>
+                  <replaceregex pattern="\.tcbuildtag" replace="" flags="g"/>
+                </tokenfilter>
+              </filterchain>
+            </loadfile>
+            <echo>Kotlin tag name:</echo>
+
+            <get dest="@{kotlin}-dist/id" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
+              <url url="${teamcity-host}/${teamcity.auth.prefix}/app/rest/latest/builds/buildType:bt345,tag:(${kotlin-tag-selector}),branch:(branches:any)/id" />
+            </get>
+
+            <loadfile property="kotlin-build-id" srcfile="@{kotlin}-dist/id">
+              <filterchain>
+                <tokenfilter>
+                  <replaceregex pattern="\s+" replace="" flags="g"/>
+                </tokenfilter>
+              </filterchain>
+            </loadfile>
+            <echo>Selected Kotlin build internal ID: ${kotlin-build-id}</echo>
+
+            <property name="kotlin-build-selector" value="${kotlin-build-id}:id" />
+          </target>
+
+          <target name="fetch-kotlin">
+              <get dest="@{kotlin}-dist" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
+                 <url url="${teamcity-host}/${teamcity.auth.prefix}/${teamcity-path-actual}/${kotlin-build-selector}/artifacts.zip"/>
+              </get>
+          </target>
+        </project>
+      </echoxml>
+
+      <ant antfile="@{kotlin}-dist/ant-helper.xml">
+        <property name="kotlin-build" value="@{build}" />
+      </ant>
+
       <unzip dest="@{kotlin}-dist" src="@{kotlin}-dist/artifacts.zip" />
 
       <unzip dest="@{kotlin}">
@@ -93,5 +156,7 @@
       <teamcity-set name="kotlin-build-number" value="${kotlin-build-number}" />
     </sequential>
   </macrodef>
+
 </project>
+
 
