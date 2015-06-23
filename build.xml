@@ -113,7 +113,7 @@
                 </tokenfilter>
               </filterchain>
             </loadfile>
-            <echo>Kotlin tag name:</echo>
+            <echo>Kotlin tag name: ${kotlin-tag-selector}</echo>
 
             <get dest="@{kotlin}-dist/id" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
               <url url="${teamcity-host}/${teamcity.auth.prefix}/app/rest/latest/builds/buildType:bt345,tag:(${kotlin-tag-selector}),branch:(branches:any)/id" />
