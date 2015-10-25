@@ -116,7 +116,7 @@
             <echo>Kotlin tag name: ${kotlin-tag-selector}</echo>
 
             <get dest="@{kotlin}-dist/id" username="${teamcity.auth.userId}" password="${teamcity.auth.password}" verbose="true">
-              <url url="${teamcity-host}/${teamcity.auth.prefix}/app/rest/latest/builds/buildType:bt345,tag:(${kotlin-tag-selector})/id" /> <!--,branch:(branches:any) -->
+              <url url="${teamcity-host}/${teamcity.auth.prefix}/app/rest/latest/builds/buildType:bt345,tag:(${kotlin-tag-selector}),branch:default:any/id" /> <!--,branch:(branches:any) -->
             </get>
 
             <loadfile property="kotlin-build-id" srcfile="@{kotlin}-dist/id">
