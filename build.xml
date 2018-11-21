@@ -45,12 +45,13 @@
       <teamcity-set name="system.path.macro.KOTLIN.BUNDLED" value="${actual.kotlinc}" />
 
       <property name="actual.jps.1" location="${actual.kotlinHome}/../lib/jps" />
-      <property name="actual.jps.2" location="${actual.kotlinHome}/../lib/kotlin-runtime.jar" />      
-      <property name="actual.jps.3" location="${actual.kotlinHome}/../lib/kotlin-reflect.jar" />
-      <property name="actual.jps.4" location="${actual.kotlinHome}/../lib/kotlin-plugin.jar" /> 
+      <property name="actual.jps.2" location="${actual.kotlinHome}/../lib/kotlin-runtime.jar" />
+      <property name="actual.jps.3" location="${actual.kotlinHome}/../lib/kotlin-stdlib.jar" />
+      <property name="actual.jps.4" location="${actual.kotlinHome}/../lib/kotlin-reflect.jar" />
+      <property name="actual.jps.5" location="${actual.kotlinHome}/../lib/kotlin-plugin.jar" /> 
 
       <!-- # use the right JPS plug-in -->
-      <teamcity-set name="teamcity.ideaRunner.additional.lib.path" value="${actual.jps.1};${actual.jps.2};${actual.jps.3};${actual.jps.4}"  />
+      <teamcity-set name="teamcity.ideaRunner.additional.lib.path" value="${actual.jps.1};${actual.jps.2};${actual.jps.3};${actual.jps.4};${actual.jps.5}"  />
 
       <property name="actual.jdk-annotations" location="${actual.kotlinHome}/lib/kotlin-jdk-annotations.jar" /> 
 
